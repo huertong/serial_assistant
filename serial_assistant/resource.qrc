@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/new/prefix1"/>
-    <qresource prefix="/">
-        <file>asset/green.png</file>
-        <file>asset/gray.png</file>
-        <file>asset/alwaysdata.svg</file>
-    </qresource>
-</RCC>
