@@ -16,6 +16,12 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>1</width>
+    <height>1</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>AAA串口助手v1</string>
   </property>
@@ -65,7 +71,7 @@ text-align: right;</string>
     <item row="3" column="1">
      <layout class="QVBoxLayout" name="verticalLayout_5">
       <item>
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="rDataHEXDisplayCheckBox">
         <property name="text">
          <string>HEX显示</string>
         </property>
@@ -85,7 +91,7 @@ text-align: right;</string>
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_2">
+       <widget class="QCheckBox" name="DTRCheckBox">
         <property name="text">
          <string>DTR</string>
         </property>
@@ -105,7 +111,7 @@ text-align: right;</string>
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_3">
+       <widget class="QCheckBox" name="RTSCheckBox">
         <property name="text">
          <string>RTS</string>
         </property>
@@ -125,7 +131,7 @@ text-align: right;</string>
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="toggleTimestampBox">
+       <widget class="QCheckBox" name="timestampCheckBox">
         <property name="text">
          <string>时间戳</string>
         </property>
@@ -149,7 +155,7 @@ text-align: right;</string>
     <item row="7" column="2" rowspan="3" colspan="2">
      <layout class="QVBoxLayout" name="verticalLayout_7">
       <item>
-       <widget class="QCheckBox" name="checkBox_12">
+       <widget class="QCheckBox" name="timeSendDataCheckBox">
         <property name="minimumSize">
          <size>
           <width>115</width>
@@ -164,7 +170,7 @@ text-align: right;</string>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QLineEdit" name="lineEdit_6">
+         <widget class="QLineEdit" name="timeSendDataText">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -230,7 +236,7 @@ text-align: right;</string>
     <item row="4" column="1" colspan="3">
      <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <widget class="QCheckBox" name="checkBox_11">
+       <widget class="QCheckBox" name="autoSaveReceiveCheckBox">
         <property name="minimumSize">
          <size>
           <width>115</width>
@@ -245,7 +251,7 @@ text-align: right;</string>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLineEdit" name="lineEdit_5">
+         <widget class="QLineEdit" name="autoSaveReceiveTimeText">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
             <horstretch>0</horstretch>
@@ -309,7 +315,7 @@ text-align: right;</string>
      </layout>
     </item>
     <item row="7" column="1">
-     <widget class="QCheckBox" name="checkBox_5">
+     <widget class="QCheckBox" name="addReturnAndFeedLineCheckBox">
       <property name="minimumSize">
        <size>
         <width>115</width>
@@ -328,7 +334,7 @@ text-align: right;</string>
      </widget>
     </item>
     <item row="8" column="1">
-     <widget class="QCheckBox" name="checkBox_6">
+     <widget class="QCheckBox" name="sDataHEXDisplayCheckBox">
       <property name="text">
        <string>HEX发送</string>
       </property>
@@ -344,16 +350,27 @@ text-align: right;</string>
       </property>
       <property name="minimumSize">
        <size>
-        <width>230</width>
+        <width>240</width>
         <height>30</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
+        <width>240</width>
+        <height>30</height>
+       </size>
+      </property>
+      <property name="sizeIncrement">
+       <size>
         <width>230</width>
         <height>30</height>
        </size>
       </property>
+      <item>
+       <property name="text">
+        <string/>
+       </property>
+      </item>
      </widget>
     </item>
     <item row="1" column="1" rowspan="2" colspan="2">
@@ -476,7 +493,15 @@ text-align: right;</string>
     <item row="0" column="0" rowspan="5">
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QTextEdit" name="outputTextEdit"/>
+       <widget class="QTextEdit" name="rDataDisplayTextEdit">
+        <property name="styleSheet">
+         <string notr="true">border-left: 3px solid gray; 
+border-top: 3px solid gray;</string>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -675,7 +700,7 @@ text-align: right;</string>
         <property name="minimumSize">
          <size>
           <width>100</width>
-          <height>30</height>
+          <height>50</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -783,7 +808,7 @@ text-align: right;</string>
     <item row="6" column="0" rowspan="3">
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QTextEdit" name="inputTextEdit"/>
+       <widget class="QTextEdit" name="sDataTextEdit"/>
       </item>
       <item>
        <widget class="QScrollBar" name="verticalScrollBar">
@@ -836,25 +861,43 @@ text-align: right;</string>
      <string>帮助</string>
     </property>
     <addaction name="actioninformation"/>
+    <addaction name="descriptioMenuAction"/>
    </widget>
-   <widget class="QMenu" name="menu_3">
+   <widget class="QMenu" name="link_1">
     <property name="title">
      <string>百度</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menu_3">
+    <property name="title">
+     <string>工具</string>
+    </property>
+    <addaction name="sendMutiParameters"/>
+   </widget>
+   <addaction name="menu_3"/>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
-   <addaction name="menu_3"/>
+   <addaction name="link_1"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="refreshList">
    <property name="text">
-    <string>refreashLIst</string>
+    <string>刷新端口</string>
    </property>
   </action>
   <action name="actioninformation">
    <property name="text">
-    <string>information</string>
+    <string>关于</string>
+   </property>
+  </action>
+  <action name="sendMutiParameters">
+   <property name="text">
+    <string>多参数发送</string>
+   </property>
+  </action>
+  <action name="descriptioMenuAction">
+   <property name="text">
+    <string>说明</string>
    </property>
   </action>
  </widget>
