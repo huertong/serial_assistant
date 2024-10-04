@@ -1,3 +1,5 @@
+﻿#pragma execution_character_set("utf-8")
+
 // SecondWindow.cpp
 #include "SecondWindow.h"
 #include "ui_secondWindow.h"

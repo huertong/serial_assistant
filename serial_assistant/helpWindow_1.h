@@ -1,3 +1,5 @@
+﻿#pragma execution_character_set("utf-8")
+
 #ifndef HELP_WINDOW_1_H
 #define HELP_WINDOW_1_H
 // helpWindow_1.h

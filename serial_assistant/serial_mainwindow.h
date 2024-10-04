@@ -1,3 +1,5 @@
+﻿#pragma execution_character_set("utf-8")
+
 #ifndef SERIAL_MAINWINDOW_H
 #define SERIAL_MAINWINDOW_H
 

@@ -1,3 +1,5 @@
+﻿#pragma execution_character_set("utf-8")
+
 // SecondWindow.h
 #ifndef SECONDWINDOW_H
 #define SECONDWINDOW_H

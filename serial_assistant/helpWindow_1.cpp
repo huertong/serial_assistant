@@ -1,3 +1,5 @@
+﻿#pragma execution_character_set("utf-8")
+
 // helpWindow_1.cpp
 #include "helpWindow_1.h"
 #include "ui_helpWindow_1.h"
