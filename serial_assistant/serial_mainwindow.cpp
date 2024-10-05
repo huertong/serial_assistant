@@ -184,49 +184,6 @@ void SerialAssistant::toggleTimestamp()
     }
 }
 
-//void SerialAssistant::sendData()
-//{
-//    if (serialPort.isOpen()) {
-//        QByteArray data = ui->sDataTextEdit->toPlainText().toUtf8();
-//        serialPort.write(data);
-
-//        // 根据 addTimestamp 的值选择是否添加时间戳
-//        if (addTimestamp) {
-
-//            QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-//            QString newText = ui->rDataDisplayLabel->text() + timestamp + " >>send: " + QString::fromUtf8(data);
-////            ui->rDataDisplayLabel->append(timestamp + " >>send: " + QString::fromUtf8(data));
-//            ui->rDataDisplayLabel->setText(newText);
-//        } else {
-//            QString newText = ui->rDataDisplayLabel->text() + QString::fromUtf8(data);
-////            ui->rDataDisplayLabel->append(QString::fromUtf8(data));
-//            ui->rDataDisplayLabel->setText(newText);
-//        }
-//    } else {
-//        QString newText = ui->rDataDisplayLabel->text() + "无法打开串口: " + serialPort.errorString();
-//        ui->rDataDisplayLabel->setText(newText);
-////        ui->sDataTextEdit->append("串口未打开");
-//    }
-//}
-
-
-
-
-//void SerialAssistant::readData()
-//{
-//    QByteArray data = serialPort.readAll();
-//    if (addTimestamp) {
-//        QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-//        QString newText = ui->rDataDisplayLabel->text() + timestamp + " >>send: " + QString::fromUtf8(data);
-////          ui->rDataDisplayLabel->append(timestamp + "receive<<:" + QString::fromUtf8(data));
-//        ui->rDataDisplayLabel->setText(newText);
-//    } else {
-//        QString newText = ui->rDataDisplayLabel->text() + QString::fromUtf8(data);
-////          ui->rDataDisplayLabel->append(QString::fromUtf8(data));
-//        ui->rDataDisplayLabel->setText(newText);
-
-//    }
-//}
 
 
 void SerialAssistant::sendData()
@@ -235,22 +192,27 @@ void SerialAssistant::sendData()
 //        QByteArray data = ui->sDataTextEdit->toPlainText().toUtf8();
 
         QByteArray data;
+        QString displayData;
+        displayData = ui->sDataTextEdit->toPlainText().toUtf8(); // 使用UTF-8编码
         // 根据选择的编码类型生成数据
         if (encoding == GB2312) {
-            data = ui->sDataTextEdit->toPlainText().toLocal8Bit(); // 使用GB2312编码
+//            qDebug() << " triggered: GB2312"; // 输出被触发的动作
+            data = ui->sDataTextEdit->toPlainText().toLocal8Bit(); // 使用UTF-8编码
         } else if(encoding == UTF8){
+//            qDebug() << " triggered: UTF8"; // 输出被触发的动作
             data = ui->sDataTextEdit->toPlainText().toUtf8(); // 使用UTF-8编码
         }else{
             data = ui->sDataTextEdit->toPlainText().toUtf8(); // 使用UTF-8编码
         }
+
         serialPort.write(data);
 
         // 根据 addTimestamp 的值选择是否添加时间戳
         if (addTimestamp) {
-            QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
-            ui->rDataDisplayTextEdit->append(timestamp + " >>send: " + QString::fromUtf8(data));
+            QString timestamp = QDateTime::currentDateTime().toString("[HH:mm:ss.zzz]");
+            ui->rDataDisplayTextEdit->append(timestamp + ">>发: " + displayData);
         } else {
-            ui->rDataDisplayTextEdit->append(QString::fromUtf8(data));
+            ui->rDataDisplayTextEdit->append(displayData);
         }
     } else {
         ui->rDataDisplayTextEdit->append("串口未打开");
@@ -273,8 +235,8 @@ void SerialAssistant::readData()
         processedData = QString::fromUtf8(data); // 使用UTF-8编码
     }
     if (addTimestamp) {
-        QString timestamp = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ");
-        ui->rDataDisplayTextEdit->append(timestamp + "receive<<:" + processedData);
+        QString timestamp = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss.zzz] ");
+        ui->rDataDisplayTextEdit->append(timestamp + "<<收: " + processedData);
     } else {
 //        ui->rDataDisplayTextEdit->append(processedData);
         ui->rDataDisplayTextEdit->insertPlainText(processedData);
