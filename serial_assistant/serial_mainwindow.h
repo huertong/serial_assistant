@@ -36,6 +36,11 @@ public:
     SerialAssistant(QWidget *parent = nullptr);
     ~SerialAssistant();
 
+    typedef enum Encoding{
+        GB2312,
+        UTF8,
+    }Encoding;
+
 private slots:
 
 
@@ -50,6 +55,7 @@ private slots:
 //    void SerialAssistant::onBaudRateChanged(int index);
     void saveParameters();
     void OpenSecondWindowButton();
+    void encodingFormatSelect(QAction *action);
 
 
 
@@ -64,6 +70,9 @@ private:
 
     bool addTimestamp = false;//是否添加时间戳
     bool port_state = false;//是否打开串口
+    Encoding encoding = GB2312;
+    QActionGroup *encodingActionGroup;
+
 
 
 //    void updateControlsVisibility();
@@ -71,6 +80,7 @@ private:
     void updatePortList();
     void initSerialParameters();
     void loadSavedConfigureParameters();
+
 
 
 };

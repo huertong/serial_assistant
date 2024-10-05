@@ -18,10 +18,22 @@ SerialAssistant::SerialAssistant(QWidget  *parent)
     qDebug() << "SerialAssistant constructor called"; // 调试信息
     ui->setupUi(this);  // 设置 UI
 
+
+
+    // 一组的项目创建 QActionGroup
+    this->encodingActionGroup = new QActionGroup(this);
+    // 添加 QAction 到 QActionGroup
+    this->encodingActionGroup->addAction(ui->encodingUTF8Action);
+    this->encodingActionGroup->addAction(ui->encodingGB2312Action);
+    // 设置互斥
+    this->encodingActionGroup->setExclusive(true);
+    ui->encodingGB2312Action->setChecked(true); // 默认选中 UTF-8
+
     initSerialParameters();
     setupConnections();
     updatePortList();
     loadSavedConfigureParameters();
+
 
 }
 
@@ -57,6 +69,12 @@ void SerialAssistant::setupConnections()
     connect(ui->sendMutiParameters, &QAction::triggered, this, &SerialAssistant::OpenSecondWindowButton);
 
     connect(ui->descriptioMenuAction, &QAction::triggered, this, &SerialAssistant::onMenuActionTriggered);
+
+//    connect(ui->encodingGB2312Action, &QAction::triggered, this, &SerialAssistant::encodingFormatSelect);
+//    connect(ui->encodingUTF8Action, &QAction::triggered, this, &SerialAssistant::encodingFormatSelect);
+    // 连接信号与槽
+    connect(this->encodingActionGroup, &QActionGroup::triggered, this, &SerialAssistant::encodingFormatSelect);
+
 
 
 
@@ -214,7 +232,17 @@ void SerialAssistant::toggleTimestamp()
 void SerialAssistant::sendData()
 {
     if (serialPort.isOpen()) {
-        QByteArray data = ui->sDataTextEdit->toPlainText().toUtf8();
+//        QByteArray data = ui->sDataTextEdit->toPlainText().toUtf8();
+
+        QByteArray data;
+        // 根据选择的编码类型生成数据
+        if (encoding == GB2312) {
+            data = ui->sDataTextEdit->toPlainText().toLocal8Bit(); // 使用GB2312编码
+        } else if(encoding == UTF8){
+            data = ui->sDataTextEdit->toPlainText().toUtf8(); // 使用UTF-8编码
+        }else{
+            data = ui->sDataTextEdit->toPlainText().toUtf8(); // 使用UTF-8编码
+        }
         serialPort.write(data);
 
         // 根据 addTimestamp 的值选择是否添加时间戳
@@ -235,12 +263,25 @@ void SerialAssistant::sendData()
 void SerialAssistant::readData()
 {
     QByteArray data = serialPort.readAll();
+    QString processedData;
+    // 处理接收的数据编码
+    if (encoding == GB2312) {
+        processedData = QString::fromLocal8Bit(data); // 使用GB2312编码
+    }else if(encoding == UTF8){
+        processedData = QString::fromUtf8(data); // 使用UTF-8编码
+    } else {
+        processedData = QString::fromUtf8(data); // 使用UTF-8编码
+    }
     if (addTimestamp) {
         QString timestamp = QDateTime::currentDateTime().toString("[yyyy-MM-dd hh:mm:ss] ");
-        ui->rDataDisplayTextEdit->append(timestamp + "receive<<:" + QString::fromUtf8(data));
+        ui->rDataDisplayTextEdit->append(timestamp + "receive<<:" + processedData);
     } else {
-        ui->rDataDisplayTextEdit->append(QString::fromUtf8(data));
+//        ui->rDataDisplayTextEdit->append(processedData);
+        ui->rDataDisplayTextEdit->insertPlainText(processedData);
+
     }
+//    ui->rDataDisplayTextEdit->verticalScrollBar()->setValue( verticalScrollBar()->maximum() ->SC ( ->setValue(scrollBar->maximum());
+    ui->rDataDisplayTextEdit->verticalScrollBar()->setValue(ui->rDataDisplayTextEdit->verticalScrollBar()->maximum());
 }
 
 void SerialAssistant::clearReceive() {
@@ -250,6 +291,20 @@ void SerialAssistant::clearReceive() {
 void SerialAssistant::clearSend() {
     ui->sDataTextEdit->clear();
 }
+
+void SerialAssistant::encodingFormatSelect(QAction *action)
+{
+//    qDebug() << " triggered:" << action->text(); // 输出被触发的动作
+    if (action) {
+        if(action->text() == "UTF8"){
+            this->encoding =UTF8;
+        }else if(action->text() == "GB2312"){
+            this->encoding=GB2312;
+        }
+    }
+
+}
+
 
 
 
@@ -369,19 +424,11 @@ void SerialAssistant::saveParameters()
     settings.setValue("param14", ui->sDataHEXDisplayCheckBox ->isChecked());
     settings.setValue("param15", ui->timeSendDataCheckBox ->isChecked());
     settings.setValue("param16", ui->timeSendDataText ->text());
-//    settings.setValue("param17", ui->autoSaveReceiveTimeText ->text());
-
-
-
-//           settings.setValue("param1", ui->autoSaveReceiveTimeText ->text());
-//           settings.setValue("param2", ui->timeSendDataText->text());
-//           settings.setValue("param3", ui->baudRateComboBox->currentIndex());
-////           settings.setValue("param4", ui->portComboBox->currentIndex());
-//           settings.setValue("param4", 1);
-//           settings.setValue("param", 1);
-
-
-
+    settings.setValue("param17",
+        this->encoding == GB2312 ? "GB2312" :
+        this->encoding == UTF8 ? "UTF8" :
+        "UTF8" // 默认或其他情况
+    );
 }
 
 //显示上次关闭窗口时的参数
@@ -412,8 +459,7 @@ void SerialAssistant::loadSavedConfigureParameters()
             settings.setValue("param14", false);  // 默认 HEX发送 关闭
             settings.setValue("param15", false);  // 默认 自动发送 关闭
             settings.setValue("param16", "1000");  // 默认发送间隔时间
-
-            // 其他默认值也可以按照此方式设置
+            settings.setValue("param17", "GB2312");// 首次使用默认 GB2312
         }
     // 恢复下拉框的当前索引
         ui->portComboBox->setCurrentIndex(settings.value("param1", 0).toInt());
@@ -442,6 +488,18 @@ void SerialAssistant::loadSavedConfigureParameters()
         // 恢复时间发送的文本框内容
         ui->timeSendDataText->setText(settings.value("param16", "defaultValue").toString());
 
+        // 恢复当前编码设置文本框内容
+        QString encodingString = settings.value("param17", "UTF8").toString(); // 默认值为 UTF8
+        if (encodingString == "GB2312") {
+            this->encoding = GB2312;
+            ui->encodingGB2312Action->setChecked(true);
+        } else if (encodingString == "UTF8") {
+            this->encoding = UTF8;
+            ui->encodingUTF8Action->setChecked(true);
+        } else {
+            this->encoding = UTF8; // 默认为 UTF8
+            ui->encodingUTF8Action->setChecked(true);
+        }
 
 }
 
@@ -491,10 +549,6 @@ void SerialAssistant::onMenuActionTriggered()
 
 }
 
-//void SerialAssistant::onBaudRateChanged(int index)
-//{
-//    qDebug() << "BonBaudRateChanged---------" ;
-//}
 
 
 /*

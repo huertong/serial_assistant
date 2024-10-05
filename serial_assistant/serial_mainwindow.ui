@@ -853,8 +853,16 @@ border-top: 3px solid gray;</string>
     <property name="title">
      <string>通讯端口</string>
     </property>
+    <widget class="QMenu" name="menu_4">
+     <property name="title">
+      <string>编码格式</string>
+     </property>
+     <addaction name="encodingGB2312Action"/>
+     <addaction name="encodingUTF8Action"/>
+    </widget>
     <addaction name="refreshList"/>
     <addaction name="separator"/>
+    <addaction name="menu_4"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -898,6 +906,22 @@ border-top: 3px solid gray;</string>
   <action name="descriptioMenuAction">
    <property name="text">
     <string>说明</string>
+   </property>
+  </action>
+  <action name="encodingGB2312Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GB2312</string>
+   </property>
+  </action>
+  <action name="encodingUTF8Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>UTF8</string>
    </property>
   </action>
  </widget>
